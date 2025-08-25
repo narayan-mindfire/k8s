@@ -12,8 +12,6 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/api/v1", router);
 
-app.listen(port, () => {
-  // console.log(`Swagger docs at http://localhost:${port}/api-docs`);
-});
+app.listen(port, () => {});
 
 export default app;

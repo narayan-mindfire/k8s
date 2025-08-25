@@ -5,11 +5,16 @@ const router = Router();
 
 router.get("/submit", async (_req: Request, res: Response) => {
   try {
-    const job = await queue.add("calculatePrimes", {
-      limit: 100000,
-    });
+    let lastJob;
 
-    res.json({ jobId: job.id, message: "Job submitted successfully" });
+    for (let i = 0; i < 100; i++) {
+      lastJob = await queue.add("calculatePrimes", { limit: 100000 });
+    }
+
+    res.json({
+      jobId: lastJob?.id,
+      message: "Jobs submitted successfully",
+    });
   } catch (err) {
     console.error("Error submitting job:", err);
     res.status(500).json({ error: "Failed to submit job" });

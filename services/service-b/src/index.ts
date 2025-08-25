@@ -1,12 +1,13 @@
 import "./Worker";
 import express from "express";
-import client from "prom-client";
 import { getMetrics, getContentType, testCounter } from "./metrics";
+import dotenv from "dotenv";
 
+dotenv.config();
 console.log("Service-B Worker is running...");
 
 const app = express();
-const metricsPort = 9091;
+const metricsPort = process.env.METRICS_PORT;
 
 app.get("/metrics", async (req, res) => {
   testCounter.inc();

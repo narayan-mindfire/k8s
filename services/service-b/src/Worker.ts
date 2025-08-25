@@ -6,8 +6,6 @@ import {
   jobErrorsCounter,
 } from "./metrics";
 
-console.log("worker running!!!!");
-
 const worker = new Worker(
   "job",
   async (job: Job) => {
