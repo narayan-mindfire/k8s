@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-a-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-a
+  template:
+    metadata:
+      labels:
+        app: service-a
+    spec:
+      containers:
+        - name: service-a
+          image: narayanmindire/service-a
+          ports:
+            - containerPort: 5000
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: REDIS_PORT
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SERVICE_A_PORT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-a-service
+spec:
+  selector:
+    app: service-a
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
