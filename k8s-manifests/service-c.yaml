@@ -48,6 +48,9 @@ metadata:
     prometheus.io/scrape: "true"
     prometheus.io/path: "/metrics"
     prometheus.io/port: "9092"
+  labels:
+    app: service-c
+    release: prometheus
 spec:
   selector:
     app: service-c
