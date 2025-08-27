@@ -4,9 +4,41 @@ services:
     container_name: redis-stack
     ports:
       - "6379:6379"
-      - "8001:8001"   
+      - "8001:8001"
     volumes:
       - redis-data:/data
+
+  service-a:
+    build:
+      dockerfile: ./services/service-a/Dockerfile
+    container_name: service-a
+    ports:
+      - "5000:5000"
+    depends_on:
+      - redis
+    env_file:
+      - ./services/service-a/.env
+
+  service-b:
+    build:
+      dockerfile: ./services/service-b/Dockerfile
+    container_name: service-b
+    depends_on:
+      - redis
+    env_file:
+      - ./services/service-b/.env
+
+  service-c:
+    build:
+      dockerfile: ./services/service-c/Dockerfile
+    container_name: service-c
+    ports:
+      - "5001:5001"
+      - "9092:9092"
+    depends_on:
+      - redis
+    env_file:
+      - ./services/service-c/.env
 
 volumes:
   redis-data:

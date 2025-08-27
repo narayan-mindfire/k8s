@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service-c-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service-c
+  template:
+    metadata:
+      labels:
+        app: service-c
+    spec:
+      containers:
+        - name: service-c
+          image: narayanmindire/service-c
+          ports:
+            - containerPort: 5001
+            - containerPort: 9092
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: REDIS_PORT
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SERVICE_C_PORT
+            - name: METRICS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config
+                  key: SERVICE_C_METRICS_PORT
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-c-service
+  annotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/path: "/metrics"
+    prometheus.io/port: "9092"
+  labels:
+    app: service-c
+    release: prometheus
+spec:
+  selector:
+    app: service-c
+  ports:
+    - protocol: TCP
+      name: http-metrics
+      port: 9092
+      targetPort: 9092
+    - protocol: TCP
+      name: http-api
+      port: 5001
+      targetPort: 5001
+  type: ClusterIP
